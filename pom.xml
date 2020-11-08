@@ -1,0 +1,226 @@
+<!--
+ Copyright 2016 Google Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <groupId>momo54</groupId>
+  <artifactId>WebAndCloud</artifactId>
+
+  <!--
+    The parent pom defines common style checks and testing strategies for our samples.
+    Removing or replacing it should not effect the execution of the samples in anyway.
+  -->
+  <parent>
+    <groupId>com.google.cloud.samples</groupId>
+    <artifactId>shared-configuration</artifactId>
+    <version>1.0.13</version>
+  </parent>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target> 
+    <maven.compiler.source>1.8</maven.compiler.source> 
+ 
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+ 
+    <endpoints.framework.version>2.2.1</endpoints.framework.version> 
+    <endpoints.management.version>1.0.12</endpoints.management.version>  
+ 
+    <checkstyle.skip>true</checkstyle.skip> 
+    
+    <endpoints.project.id>credible-mode-290313</endpoints.project.id>
+  </properties> 
+
+  <dependencies> 
+     <!-- Compile/runtime dependencies -->
+    <dependency> 
+      <groupId>com.google.endpoints</groupId> 
+      <artifactId>endpoints-framework</artifactId> 
+      <version>2.2.1</version>
+    </dependency>
+    <!-- [START api_management] -->
+    <dependency>
+      <groupId>com.google.endpoints</groupId>
+      <artifactId>endpoints-management-control-appengine-all</artifactId>
+      <version>1.0.12</version>
+    </dependency>
+    <!-- [END api_management] -->
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-1.0-sdk</artifactId>
+      <version>1.9.83</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    
+  </dependencies>
+
+  <build>
+    <!-- for hot reload of the web application-->
+    <!--     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes       -->
+    <outputDirectory>src/main/WEB-INF/classes</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.3</version>
+        <configuration>
+          <webResources>
+            <resources>
+              <!--              <directory>${basedir}/src/main/webapp/WEB-INF</directory>    -->
+              <directory>src/main/webapp/WEB-INF</directory>
+              <filtering>true</filtering>
+              <targetPath>WEB-INF</targetPath>
+            </resources>
+          </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>appengine-maven-plugin</artifactId>
+        <version>2.4.0</version>
+        <configuration>
+          <!-- deploy configuration -->
+          <projectId>GCLOUD_CONFIG</projectId>
+          <version>GCLOUD_CONFIG</version>
+        </configuration>
+      </plugin>
+      <!-- [START endpoints_plugin] -->
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>endpoints-framework-maven-plugin</artifactId>
+        <version>2.0.1</version>
+        <configuration>
+          <!-- plugin configuration -->
+          <hostname>credible-mode-290313.appspot.com</hostname>
+        </configuration>
+      </plugin>
+      <!-- [END endpoints_plugin] -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>display-dependency-updates</goal>
+              <goal>display-plugin-updates</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <!-- in order to fix : 
+        Project does not define required minimum version of Maven.
+        [ERROR] Update the pom.xml to contain maven-enforcer-plugin to
+        [ERROR] force the Maven version which is needed to build this project.
+        [ERROR] See https://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html
+        [ERROR] Using the minimum version of Maven: 3.1.0 -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M3</version>
+          <executions>
+            <execution>
+              <id>enforce-versions</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <bannedPlugins>
+                    <!-- will only display a warning but does not fail the build. -->
+                    <level>WARN</level>
+                    <excludes>
+                      <exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
+                    </excludes>
+                    <message>Please consider using the maven-invoker-plugin (http://maven.apache.org/plugins/maven-invoker-plugin/)!</message>
+                  </bannedPlugins>
+                  <requireMavenVersion>
+                    <version>2.0.6</version>
+                  </requireMavenVersion>
+                  <requireJavaVersion>
+                    <version>1.5</version>
+                  </requireJavaVersion>
+                  <requireOS>
+                    <family>unix</family>
+                  </requireOS>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+      <!-- fix warnings : 
+        [WARNING] The following plugins do not have their version specified:
+        [WARNING]   maven-clean-plugin ........................ (from super-pom) 2.2
+        [WARNING]   maven-compiler-plugin ................... (from super-pom) 2.0.2
+        [WARNING]   maven-deploy-plugin ....................... (from super-pom) 2.4
+        [WARNING]   maven-install-plugin ...................... (from super-pom) 2.2
+        [WARNING]   maven-resources-plugin .................... (from super-pom) 2.2
+        [WARNING]   maven-site-plugin .................. (from super-pom) 2.0-beta-4
+        [WARNING]   maven-surefire-plugin ................... (from super-pom) 2.4.2 with : 
+
+ 
+
+
+  To define the plugin version in your parent POM 
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        ...
+      </plugins>
+    </pluginManagement>
+     To use the plugin goals in your POM or parent POM
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+      ...
+    </plugins> -->
+
+
+
+    </plugins>
+  </build>
+</project>
