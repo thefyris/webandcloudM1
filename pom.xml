@@ -32,6 +32,8 @@
   </parent>
 
   <properties>
+
+  
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
 
@@ -42,7 +44,7 @@
 
     <checkstyle.skip>true</checkstyle.skip>
     
-    <endpoints.project.id>sobike44</endpoints.project.id>
+    <endpoints.project.id>credible-mode-290313</endpoints.project.id>
   </properties>
 
   <dependencies>
@@ -110,11 +112,10 @@
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
         <version>2.2.0</version>
-        <configuration>
-          <!-- deploy configuration -->
-          <projectId>GCLOUD_CONFIG</projectId>
-          <version>GCLOUD_CONFIG</version>
-        </configuration>
+         <configuration>
+            <deploy.projectId>credible-mode-290313</deploy.projectId>
+            <deploy.version>my-version</deploy.version>
+         </configuration>
       </plugin>
       <!-- [START endpoints_plugin] -->
       <plugin>
@@ -123,7 +124,7 @@
         <version>2.0.1</version>
         <configuration>
           <!-- plugin configuration -->
-          <hostname>${endpoints.project.id}.appspot.com</hostname>
+          <hostname>credible-mode-290313.appspot.com</hostname>
         </configuration>
       </plugin>
       <!-- [END endpoints_plugin] -->
